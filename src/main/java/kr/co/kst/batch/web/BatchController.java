@@ -11,24 +11,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("batch")
 public class BatchController {
     private final JobLauncher jobLauncher;
-    private final Job sampleJob;
+    private final Job job1;
 
-    public BatchController(JobLauncher jobLauncher, Job sampleJob) {
+    public BatchController(JobLauncher jobLauncher, Job job1) {
         this.jobLauncher = jobLauncher;
-        this.sampleJob = sampleJob;
+        this.job1 = job1;
     }
 
     @PostMapping("start")
     public ResponseEntity<String> startBatch() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters parameters = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
+                .addString("requestDate", LocalDate.now().toString())
                 .toJobParameters();
 
-        JobExecution jobExecution = jobLauncher.run(sampleJob, parameters);
+        JobExecution jobExecution = jobLauncher.run(job1, parameters);
         return ResponseEntity.ok(
                 String.format("Job started with status: %s", jobExecution.getStatus())
         );

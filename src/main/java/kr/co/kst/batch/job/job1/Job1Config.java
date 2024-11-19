@@ -10,7 +10,6 @@ import kr.co.kst.batch.job.job1.step.CustomItemWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
@@ -21,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class Job1Config extends DefaultBatchConfiguration {
+public class Job1Config {
     private final Job1Listener job1Listener;
     private final CommonJobListener commonJobListener;
     private final JobParameterValidator validator;
@@ -30,16 +29,14 @@ public class Job1Config extends DefaultBatchConfiguration {
     private final CustomItemWriter customItemWriter;
 
     @Bean
-    public Job job1(JobRepository jobRepository) {
+    public Job job1(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("job1", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .validator(validator)
                 .listener(commonJobListener)
                 .listener(job1Listener)
-                .start(job1Step1(jobRepository, getTransactionManager()))
+                .start(job1Step1(jobRepository, transactionManager))
                 .build();
-
-
     }
 
     @Bean

@@ -18,7 +18,7 @@ public class Job1Listener implements JobExecutionListener {
     @Override
     public void afterJob(JobExecution jobExecution) {
         Long startTime = (Long) jobExecution.getExecutionContext().get("startTime");
-        Long endTime = (Long) jobExecution.getExecutionContext().get("endTime");
+        Long endTime = System.currentTimeMillis();
         log.info("job1 Finished: {} ({}ms)", jobExecution.getStatus(), endTime - startTime);
     }
 }
